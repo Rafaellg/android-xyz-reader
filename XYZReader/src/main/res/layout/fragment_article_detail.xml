@@ -1,23 +1,30 @@
-<com.example.xyzreader.ui.DrawInsetsFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/draw_insets_frame_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:ignore="MergeRootFrame">
 
-    <com.example.xyzreader.ui.ObservableScrollView
-        android:id="@+id/scrollview"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="@dimen/app_bar_height"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <FrameLayout
+        <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll"
+            app:toolbarId="@+id/toolbar">
 
             <FrameLayout
-                android:id="@+id/photo_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true">
 
                 <!--suppress AndroidLintContentDescription -->
                 <ImageView
@@ -25,47 +32,29 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:adjustViewBounds="true"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/empty_detail" />
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="112dp"
+                    android:layout_height="match_parent"
                     android:background="@drawable/photo_background_protection" />
 
-            </FrameLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/detail_card_top_margin"
-                android:background="#fff"
-                android:elevation="4dp"
-                android:maxWidth="@dimen/detail_card_max_width"
-                android:orientation="vertical">
-
                 <LinearLayout
-                    android:id="@+id/meta_bar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:layout_marginBottom="@dimen/detail_metabar_vert_padding"
-                    android:background="#333"
                     android:orientation="vertical"
-                    android:paddingBottom="@dimen/detail_metabar_vert_padding"
-                    android:paddingLeft="@dimen/detail_inner_horiz_margin"
-                    android:paddingRight="@dimen/detail_inner_horiz_margin"
-                    android:paddingTop="@dimen/detail_metabar_vert_padding">
+                    android:padding="16dp">
 
                     <TextView
                         android:id="@+id/article_title"
-                        style="?android:attr/textAppearanceLarge"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:lineSpacingMultiplier="0.9"
                         android:paddingBottom="@dimen/detail_metabar_title_bottom_padding"
                         android:textColor="#fff"
-                        android:textSize="@dimen/detail_title_text_size"
+                        android:textSize="22sp"
                         android:textStyle="bold"
                         tools:text="Title" />
 
@@ -79,31 +68,47 @@
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/article_body"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/detail_inner_horiz_margin"
-                    android:layout_marginRight="@dimen/detail_inner_horiz_margin"
-                    android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier"
-                    android:paddingBottom="@dimen/detail_body_bottom_margin"
-                    android:textColorLink="@color/colorAccent"
-                    android:textSize="@dimen/detail_body_text_size"
-                    tools:text="Text" />
+            </FrameLayout>
 
-            </LinearLayout>
-        </FrameLayout>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/detail_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:navigationIcon="@drawable/ic_arrow_back"
+                android:theme="@style/ThemeOverlay.AppCompat.Light"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-    </com.example.xyzreader.ui.ObservableScrollView>
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <TextView
+            android:id="@+id/article_body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingMultiplier="@fraction/detail_body_line_spacing_multiplier"
+            android:padding="24dp"
+            android:textColorLink="@color/colorAccent"
+            android:textSize="@dimen/detail_body_text_size"
+            tools:text="Text" />
+
+    </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/share_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:contentDescription="@string/action_share"
-        android:src="@drawable/ic_share"
-        app:fabSize="normal" />
+        app:fabSize="normal"
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="bottom|end"
+        app:srcCompat="@drawable/ic_share" />
 
-</com.example.xyzreader.ui.DrawInsetsFrameLayout>
+</android.support.design.widget.CoordinatorLayout>
