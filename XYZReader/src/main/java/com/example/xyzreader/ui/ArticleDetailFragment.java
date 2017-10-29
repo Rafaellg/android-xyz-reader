@@ -5,10 +5,10 @@ import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ShareCompat;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.format.DateUtils;
@@ -17,11 +17,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 
@@ -42,8 +39,9 @@ public class ArticleDetailFragment extends Fragment implements LoaderManager.Loa
     private long mItemId;
     private View mRootView;
 
-    private ImageView mPhotoView;
-    private Toolbar mToolbar;
+    private DynamicHeightNetworkImageView mPhotoView;
+    private CollapsingToolbarLayout mCollapsingToolbarLayout;
+    private AppBarLayout mAppBarLayout;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss");
     // Use default locale format
@@ -95,7 +93,7 @@ public class ArticleDetailFragment extends Fragment implements LoaderManager.Loa
 
         mPhotoView = mRootView.findViewById(R.id.photo);
 
-        mToolbar = mRootView.findViewById(R.id.detail_toolbar);
+        Toolbar mToolbar = mRootView.findViewById(R.id.toolbar);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,7 +111,9 @@ public class ArticleDetailFragment extends Fragment implements LoaderManager.Loa
             }
         });
 
-        bindViews();
+        mCollapsingToolbarLayout = mRootView.findViewById(R.id.collapsing_toolbar);
+        mAppBarLayout = mRootView.findViewById(R.id.app_bar);
+
         return mRootView;
     }
 
@@ -163,22 +163,31 @@ public class ArticleDetailFragment extends Fragment implements LoaderManager.Loa
 
             }
             bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
-            ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
-                    .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
-                        @Override
-                        public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
-                            Bitmap bitmap = imageContainer.getBitmap();
-                            if (bitmap != null) {
-                                Palette p = Palette.generate(bitmap, 12);
-                                mPhotoView.setImageBitmap(imageContainer.getBitmap());
-                            }
-                        }
 
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
+            mPhotoView.setImageUrl(
+                    mCursor.getString(ArticleLoader.Query.THUMB_URL),
+                    ImageLoaderHelper.getInstance(getActivity()).getImageLoader());
 
-                        }
-                    });
+            // Show title on toolbar only when collapse
+            mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+                boolean isShow = false;
+                int scrollRange = -1;
+
+                @Override
+                public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                    if (scrollRange == -1) {
+                        scrollRange = appBarLayout.getTotalScrollRange();
+                    }
+                    if (scrollRange + verticalOffset == 0) {
+                        mCollapsingToolbarLayout.setTitleEnabled(true);
+                        mCollapsingToolbarLayout.setTitle(mCursor.getString(ArticleLoader.Query.TITLE));
+                        isShow = true;
+                    } else if (isShow) {
+                        mCollapsingToolbarLayout.setTitleEnabled(false);
+                        isShow = false;
+                    }
+                }
+            });
         } else {
             mRootView.setVisibility(View.GONE);
             titleView.setText("N/A");
