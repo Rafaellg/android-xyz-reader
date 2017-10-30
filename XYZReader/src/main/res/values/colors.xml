@@ -5,4 +5,5 @@
 
     <color name="photo_placeholder">#ccc</color>
     <color name="ltgray">#ffe0e0e0</color>
+    <color name="colorGrayDark">#212121</color>
 </resources>

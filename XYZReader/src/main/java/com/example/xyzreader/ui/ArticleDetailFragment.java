@@ -97,7 +97,7 @@ public class ArticleDetailFragment extends Fragment implements LoaderManager.Loa
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().finish();
+                getActivity().onBackPressed();
             }
         });
 

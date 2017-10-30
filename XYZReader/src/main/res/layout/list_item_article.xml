@@ -11,7 +11,7 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?selectableItemBackground"
-    app:cardBackgroundColor="@color/photo_placeholder">
+    app:cardBackgroundColor="@color/colorGrayDark">
 
     <LinearLayout
         android:layout_width="match_parent"
